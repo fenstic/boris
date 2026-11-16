@@ -2,10 +2,11 @@
   const { $, mouse, coarse, PX2MM } = Site;
 
   const nameEl = $('#name');
-  const letters = [...'Boris'].map(c => {
+  const letters = [...'Boris'].map((c, i) => {
     const s = document.createElement('span');
     s.textContent = c;
     s.setAttribute('aria-hidden', 'true');
+    s.style.setProperty('--i', i);
     return s;
   });
   nameEl.replaceChildren(...letters);

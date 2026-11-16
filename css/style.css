@@ -114,3 +114,56 @@ img{max-width:100%}
 
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.loader{position:fixed;inset:0;z-index:200;background:var(--void);display:grid;place-items:center;transition:opacity .5s ease,visibility 0s linear .5s}
+.loader.done{opacity:0;visibility:hidden}
+.ld{position:relative;width:14px;height:14px;border-radius:7px;background:var(--ink);border:1px solid var(--ink);animation:ld-breathe 1.4s ease-in-out infinite}
+.ld::before,.ld::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:1px solid var(--ink);opacity:0;animation:ld-ring 1.4s cubic-bezier(.2,.6,.3,1) infinite}
+.ld::after{animation-delay:.7s}
+.ld.morph{animation:none;transition:width .75s cubic-bezier(.7,0,.2,1),height .75s cubic-bezier(.7,0,.2,1),border-radius .6s cubic-bezier(.7,0,.2,1),background-color .45s ease,border-color .75s ease,transform .75s cubic-bezier(.7,0,.2,1)}
+.ld.morph::before,.ld.morph::after{animation:none;opacity:0}
+@keyframes ld-breathe{0%,100%{transform:scale(1)}50%{transform:scale(.72)}}
+@keyframes ld-ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(5.5);opacity:0}}
+
+.ready #grid{animation:a-fade 1.4s ease both}
+.ready .crop{animation:a-crop .9s cubic-bezier(.2,.8,.2,1) .05s both}
+.crop.tl{--cx:-16px;--cy:-16px}.crop.tr{--cx:16px;--cy:-16px}.crop.bl{--cx:-16px;--cy:16px}.crop.br{--cx:16px;--cy:16px}
+.ready .strip.top > .lbl:first-child{animation:a-track .9s cubic-bezier(.2,.8,.2,1) .1s both}
+.ready #coords{animation:a-blur .9s ease .25s both}
+.ready .who > .lbl{animation:a-wipe .7s cubic-bezier(.7,0,.2,1) .15s both}
+.ready .name span{animation:a-rise .9s cubic-bezier(.2,.9,.25,1) calc(.22s + var(--i) * .07s) both}
+.ready .dim .rule:first-child{transform-origin:right;animation:a-grow .8s cubic-bezier(.7,0,.2,1) .55s both}
+.ready .dim .rule:last-child{transform-origin:left;animation:a-grow .8s cubic-bezier(.7,0,.2,1) .55s both}
+.ready .dim .lbl{animation:a-fade .5s ease .8s both}
+.ready .quote{animation:a-blur 1.1s ease .7s both}
+.ready .facts > div{transform-origin:50% 0;animation:a-flip .8s cubic-bezier(.2,.8,.2,1) both}
+.ready .facts > div:nth-child(1){animation-delay:.85s}
+.ready .facts > div:nth-child(2){animation-delay:.95s}
+.ready .side section:nth-of-type(1) .blk-h{animation:a-wipe .7s cubic-bezier(.7,0,.2,1) .3s both}
+.ready .av{animation:a-spin .9s cubic-bezier(.3,1.4,.5,1) .45s both}
+.ready .dc-info{animation:a-unmask .8s cubic-bezier(.2,.8,.2,1) .6s both}
+.ready .side section:nth-of-type(2) .blk-h{animation:a-drop .7s cubic-bezier(.2,.8,.2,1) .6s both}
+.ready .parts li{animation:a-slide .8s cubic-bezier(.2,.8,.2,1) both}
+.ready .parts li:nth-child(1){animation-delay:.7s}
+.ready .parts li:nth-child(2){animation-delay:.8s}
+.ready .parts li:nth-child(3){animation-delay:.9s}
+.ready .strip.bot .grp a{animation:a-up .7s cubic-bezier(.2,.8,.2,1) both}
+.ready .strip.bot .grp a:nth-child(1){animation-delay:.95s}
+.ready .strip.bot .grp a:nth-child(2){animation-delay:1.02s}
+.ready .strip.bot .grp a:nth-child(3){animation-delay:1.09s}
+.ready #countdown{animation:a-track-r 1s cubic-bezier(.2,.8,.2,1) 1.05s both}
+
+@keyframes a-fade{from{opacity:0}}
+@keyframes a-crop{from{opacity:0;transform:translate(var(--cx),var(--cy))}}
+@keyframes a-track{from{opacity:0;transform:translateX(-14px);letter-spacing:.5em}}
+@keyframes a-track-r{from{opacity:0;letter-spacing:.7em}}
+@keyframes a-blur{from{opacity:0;filter:blur(10px)}}
+@keyframes a-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes a-rise{from{opacity:0;transform:translateY(.4em) rotate(6deg)}}
+@keyframes a-grow{from{transform:scaleX(0)}}
+@keyframes a-flip{from{opacity:0;transform:perspective(500px) rotateX(-85deg)}}
+@keyframes a-spin{from{opacity:0;transform:scale(.3) rotate(-120deg)}}
+@keyframes a-unmask{from{opacity:0;transform:translateY(10px);clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes a-drop{from{opacity:0;transform:translateY(-12px)}}
+@keyframes a-slide{from{opacity:0;transform:translateX(32px)}}
+@keyframes a-up{from{opacity:0;transform:translateY(120%)}}
