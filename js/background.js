@@ -15,7 +15,7 @@
   const pings = [];
   const meas = { on: false, x1: 0, y1: 0, x2: 0, y2: 0 };
   const done = [];
-  const interactive = 'a,button,.name,.quote,.facts,.handle,.dc,.parts,.blk-h,.strip';
+  const interactive = 'a,button,.name,.quote,.facts,.dc,.parts,.blk-h,.strip';
 
   addEventListener('pointerdown', e => {
     if (e.button !== 0 || e.target.closest(interactive)) return;

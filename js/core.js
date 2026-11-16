@@ -21,23 +21,4 @@
     $('#coords').textContent = `X ${(e.clientX * PX2MM).toFixed(1).padStart(5, '0')} · Y ${(e.clientY * PX2MM).toFixed(1).padStart(5, '0')} mm`;
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => { mouse.on = false; });
-
-  const toastEl = $('#toast');
-  let toastT;
-  Site.toast = msg => {
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    clearTimeout(toastT);
-    toastT = setTimeout(() => toastEl.classList.remove('show'), 1600);
-  };
-  Site.copy = async text => {
-    try { await navigator.clipboard.writeText(text); Site.toast('Copied ' + text); }
-    catch {
-      const a = document.createElement('textarea');
-      a.value = text; document.body.appendChild(a); a.select();
-      try { document.execCommand('copy'); Site.toast('Copied ' + text); } catch { Site.toast(text); }
-      a.remove();
-    }
-  };
-  $('#copyHandle').addEventListener('click', () => Site.copy('@fenstic'));
 })();
