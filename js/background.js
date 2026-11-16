@@ -55,19 +55,49 @@
     return [x + dx, y + dy];
   }
 
+  const DUR = 1000, V_STAGGER = 14, H_STAGGER = 22;
+  let introT = null, introDone = reduce;
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+  function grow(now, delay){
+    if (introDone) return 1;
+    if (introT === null) return 0;
+    return easeOut(Math.max(0, Math.min(1, (now - introT - delay) / DUR)));
+  }
+
   function gridPath(major, now){
     ctx.beginPath();
     const seg = 14;
+    const cols = Math.ceil((W + STEP) / STEP), rows = Math.ceil((H + STEP) / STEP);
+
     for (let i = 0, x = 0.5; x < W + STEP; x += STEP, i++) {
       if ((i % MAJOR === 0) !== major) continue;
-      let [px, py] = warp(x, 0, now); ctx.moveTo(px, py);
-      for (let y = seg; y <= H + seg; y += seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
+      const p = grow(now, (cols - 1 - i) * V_STAGGER);
+      if (p <= 0) continue;
+      const start = H + seg, end = start - (H + seg * 2) * p;
+      let [px, py] = warp(x, start, now); ctx.moveTo(px, py);
+      for (let y = start - seg; y > end; y -= seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
+      [px, py] = warp(x, end, now); ctx.lineTo(px, py);
     }
+
     for (let j = 0, y = 0.5; y < H + STEP; y += STEP, j++) {
       if ((j % MAJOR === 0) !== major) continue;
-      let [px, py] = warp(0, y, now); ctx.moveTo(px, py);
-      for (let x = seg; x <= W + seg; x += seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
+      const p = grow(now, (rows - 1 - j) * H_STAGGER);
+      if (p <= 0) continue;
+      const start = W + seg, end = start - (W + seg * 2) * p;
+      let [px, py] = warp(start, y, now); ctx.moveTo(px, py);
+      for (let x = start - seg; x > end; x -= seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
+      [px, py] = warp(end, y, now); ctx.lineTo(px, py);
     }
+  }
+
+  function introStep(now){
+    if (introDone) return;
+    if (introT === null && document.documentElement.classList.contains('ready')) introT = now;
+    if (introT === null) return;
+    const cols = Math.ceil((W + STEP) / STEP), rows = Math.ceil((H + STEP) / STEP);
+    const last = Math.max((cols - 1) * V_STAGGER, (rows - 1) * H_STAGGER) + DUR;
+    if (now - introT > last) introDone = true;
   }
 
   function lit(base, peak){
@@ -99,13 +129,15 @@
     ctx.restore();
   }
 
-  function frameTicks(){
+  function frameTicks(now){
+    const a = introDone ? 1 : introT === null ? 0 : Math.max(0, Math.min(1, (now - introT - 500) / 700));
+    if (a <= 0) return;
     const r = $('#sheet').getBoundingClientRect();
-    ctx.fillStyle = 'rgba(255,255,255,.12)';
+    ctx.fillStyle = `rgba(255,255,255,${.12 * a})`;
     for (let x = r.left; x <= r.right; x += 10) { const l = Math.round(x - r.left) % 100 === 0 ? 6 : 3; ctx.fillRect(x, r.top - l - 2, 1, l); }
     for (let y = r.top; y <= r.bottom; y += 10) { const l = Math.round(y - r.top) % 100 === 0 ? 6 : 3; ctx.fillRect(r.left - l - 2, y, l, 1); }
     if (mouse.on && !coarse) {
-      ctx.fillStyle = 'rgba(237,237,237,.85)';
+      ctx.fillStyle = `rgba(237,237,237,${.85 * a})`;
       const mx = Math.min(r.right, Math.max(r.left, mouse.sx)), my = Math.min(r.bottom, Math.max(r.top, mouse.sy));
       ctx.beginPath(); ctx.moveTo(mx, r.top - 2); ctx.lineTo(mx - 4, r.top - 9); ctx.lineTo(mx + 4, r.top - 9); ctx.fill();
       ctx.beginPath(); ctx.moveTo(r.left - 2, my); ctx.lineTo(r.left - 9, my - 4); ctx.lineTo(r.left - 9, my + 4); ctx.fill();
@@ -114,6 +146,7 @@
 
   Site.drawBackground = now => {
     for (let i = pings.length - 1; i >= 0; i--) if (now - pings[i].t > 1600) pings.splice(i, 1);
+    introStep(now);
 
     ctx.fillStyle = '#060606'; ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = 1;
@@ -126,7 +159,7 @@
       ctx.beginPath(); ctx.arc(p.x, p.y, age * 520, 0, 6.283); ctx.stroke(); ctx.setLineDash([]);
     }
 
-    frameTicks();
+    frameTicks(now);
 
     for (let i = done.length - 1; i >= 0; i--) {
       const age = (now - done[i].t) / 3000;
