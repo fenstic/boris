@@ -18,8 +18,7 @@
 
   function remove(){
     document.documentElement.classList.add('ready');
-    loader.classList.add('done');
-    setTimeout(() => loader.remove(), 600);
+    loader.remove();
   }
 
   function finish(){
@@ -27,6 +26,12 @@
     finished = true;
     if (reduce) { remove(); return; }
 
+    document.documentElement.classList.add('lines');
+    loader.classList.add('done');
+    setTimeout(morph, 280);
+  }
+
+  function morph(){
     const sheet = document.getElementById('sheet');
     const r = sheet.getBoundingClientRect();
     const dx = r.left + r.width / 2 - innerWidth / 2;
@@ -41,7 +46,8 @@
     ld.style.borderColor = 'var(--line)';
     ld.style.transform = `translate(${dx}px,${dy}px)`;
 
-    setTimeout(remove, 800);
+    setTimeout(() => document.documentElement.classList.add('ready'), 350);
+    setTimeout(() => loader.remove(), 1050);
   }
 
   Promise.all([loaded, fonts.catch(() => {})])

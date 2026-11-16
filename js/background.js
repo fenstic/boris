@@ -93,7 +93,8 @@
 
   function introStep(now){
     if (introDone) return;
-    if (introT === null && document.documentElement.classList.contains('ready')) introT = now;
+    const cl = document.documentElement.classList;
+    if (introT === null && (cl.contains('lines') || cl.contains('ready'))) introT = now;
     if (introT === null) return;
     const cols = Math.ceil((W + STEP) / STEP), rows = Math.ceil((H + STEP) / STEP);
     const last = Math.max((cols - 1) * V_STAGGER, (rows - 1) * H_STAGGER) + DUR;
@@ -130,7 +131,7 @@
   }
 
   function frameTicks(now){
-    const a = introDone ? 1 : introT === null ? 0 : Math.max(0, Math.min(1, (now - introT - 500) / 700));
+    const a = introDone ? 1 : introT === null ? 0 : Math.max(0, Math.min(1, (now - introT - 900) / 600));
     if (a <= 0) return;
     const r = $('#sheet').getBoundingClientRect();
     ctx.fillStyle = `rgba(255,255,255,${.12 * a})`;
