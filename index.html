@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>boris</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="boris">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,slnt,wdth,wght,GRAD,ROND@6..144,-10..0,25..151,1..1000,0..100,0..100&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<script src="js/core.js" defer></script>
+<script src="js/time.js" defer></script>
+<script src="js/name.js" defer></script>
+<script src="js/background.js" defer></script>
+<script src="js/cursor.js" defer></script>
+<script src="js/discord.js" defer></script>
+<script src="js/main.js" defer></script>
+</head>
+<body>
+<canvas id="grid" aria-hidden="true"></canvas>
+
+<main class="sheet" id="sheet">
+  <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
+
+  <header class="strip top">
+    <span class="lbl">Sheet 01 · Boris</span>
+    <span class="lbl" id="coords">X 000.0 · Y 000.0 mm</span>
+  </header>
+
+  <div class="body">
+    <section class="who" aria-label="About">
+      <span class="lbl">Fig. 1 · Subject</span>
+      <div class="name-wrap">
+        <h1 class="name" id="name" aria-label="Boris">Boris</h1>
+        <div class="dim" aria-hidden="true"><span class="rule"></span><span class="lbl" id="dimTxt">0.0 mm</span><span class="rule"></span></div>
+      </div>
+      <div class="handle">
+        <span>aka <b>@fenstic</b></span>
+        <button class="btn" type="button" id="copyHandle">Copy</button>
+      </div>
+      <p class="quote">Some things are felt before they’re understood.</p>
+      <dl class="facts">
+        <div><dt class="lbl">Local time</dt><dd id="clock">--:--</dd></div>
+        <div><dt class="lbl">Status</dt><dd id="statusFact">Offline</dd></div>
+      </dl>
+    </section>
+
+    <div class="side">
+      <section aria-label="Discord">
+        <div class="blk-h"><span class="lbl">Signal · Discord</span><span class="lbl" id="link">connecting</span></div>
+        <div class="dc">
+          <a class="av" data-cursor="round" data-pad="12" href="https://discord.com/users/204625571865427968" target="_blank" rel="noopener" aria-label="Open Discord profile">
+            <span class="ring"></span>
+            <img class="pic" id="avatar" alt="" src="https://cdn.discordapp.com/embed/avatars/0.png">
+            <span class="st"><i class="dot offline" id="dot"></i></span>
+          </a>
+          <div class="dc-info">
+            <div class="dc-name"><b id="dn">Boris</b><span id="un"></span></div>
+            <div class="dc-st"><span id="stTxt">Offline</span><span class="sep">/</span><span id="plat">Nowhere</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="Projects">
+        <div class="blk-h"><span class="lbl">Parts list</span><span class="lbl">03</span></div>
+        <ul class="parts">
+          <li><a class="part" href="https://apps.microsoft.com/detail/xp8k4j7b5tj8zb" target="_blank" rel="noopener">
+            <span class="no">01</span>
+            <span><div class="t">Copy!</div><div class="d">Visual feedback for keyboard shortcuts on Windows</div></span>
+            <span class="go"><span class="lbl">Store</span><svg viewBox="0 0 14 14"><path d="M3 11 11 3M5 3h6v6"/></svg></span>
+          </a></li>
+          <li><a class="part" href="https://fent.rip" target="_blank" rel="noopener">
+            <span class="no">02</span>
+            <span><div class="t">URL Shortener</div><div class="d">Short links with no account and no tracking</div></span>
+            <span class="go"><span class="lbl">fent.rip</span><svg viewBox="0 0 14 14"><path d="M3 11 11 3M5 3h6v6"/></svg></span>
+          </a></li>
+          <li><a class="part" href="https://m3e.fent.rip" target="_blank" rel="noopener">
+            <span class="no">03</span>
+            <span><div class="t">M3E New Page</div><div class="d">A quiet new-tab page with a clock and shortcuts</div></span>
+            <span class="go"><span class="lbl">m3e</span><svg viewBox="0 0 14 14"><path d="M3 11 11 3M5 3h6v6"/></svg></span>
+          </a></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <footer class="strip bot">
+    <div class="grp">
+      <a class="lbl" href="https://haunt.gg/%D0%B1" target="_blank" rel="noopener">haunt.gg/б</a>
+      <a class="lbl" href="https://discord.com/users/204625571865427968" target="_blank" rel="noopener">Discord</a>
+      <a class="lbl" href="https://www.instagram.com/gitlarp/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+    <span class="lbl" id="countdown" title="Countdown to 20 January 2027, 00:00 GMT+2">--:--:--:--</span>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="cur" id="cur" aria-hidden="true"><i class="k tl"></i><i class="k tr"></i><i class="k bl"></i><i class="k br"></i></div>
+
+</body>
+</html>
