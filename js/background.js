@@ -1,5 +1,5 @@
 (() => {
-  const { $, mouse, reduce, coarse, PX2MM } = Site;
+  const { $, mouse, touch, reduce, coarse, PX2MM } = Site;
 
   const cv = $('#grid'), ctx = cv.getContext('2d');
   let W = 0, H = 0;
@@ -18,7 +18,7 @@
   const interactive = 'a,button,.name,.quote,.facts,.dc,.parts,.blk-h,.strip';
 
   addEventListener('pointerdown', e => {
-    if (e.button !== 0 || e.target.closest(interactive)) return;
+    if (coarse || e.button !== 0 || e.target.closest(interactive)) return;
     if (e.pointerType !== 'touch') e.preventDefault();
     meas.on = true;
     meas.x1 = meas.x2 = e.clientX; meas.y1 = meas.y2 = e.clientY;
@@ -40,11 +40,18 @@
 
   const STEP = 28, MAJOR = 5;
 
+  let L = null;
+  function lens(){
+    if (mouse.on && !coarse) return [mouse.sx, mouse.sy, 1];
+    if (coarse && !reduce && touch.k > .01) return [touch.sx, touch.sy, touch.k];
+    return null;
+  }
+
   function warp(x, y, now){
     let dx = 0, dy = 0;
-    if (mouse.on && !coarse) {
-      const vx = x - mouse.sx, vy = y - mouse.sy, r2 = vx * vx + vy * vy;
-      const k = 0.16 * Math.exp(-r2 / (150 * 150));
+    if (L) {
+      const vx = x - L[0], vy = y - L[1], r2 = vx * vx + vy * vy;
+      const k = 0.16 * L[2] * Math.exp(-r2 / (150 * 150));
       dx += vx * k; dy += vy * k;
     }
     for (const p of pings) {
@@ -81,9 +88,10 @@
       [px, py] = warp(x, end, now); ctx.lineTo(px, py);
     }
 
-    for (let j = 0, y = 0.5; y < H + STEP; y += STEP, j++) {
+    const off = coarse && !reduce ? scrollY * .4 : 0, j0 = Math.floor(off / STEP);
+    for (let j = j0, y = j0 * STEP - off + 0.5; y < H + STEP; y += STEP, j++) {
       if ((j % MAJOR === 0) !== major) continue;
-      const p = grow(now, (rows - 1 - j) * H_STAGGER);
+      const p = grow(now, (rows - 1 - (j - j0)) * H_STAGGER);
       if (p <= 0) continue;
       const start = W + seg, end = start - (W + seg * 2) * p;
       let [px, py] = warp(start, y, now); ctx.moveTo(px, py);
@@ -103,9 +111,9 @@
   }
 
   function lit(base, peak){
-    if (!mouse.on || coarse) return `rgba(255,255,255,${base})`;
-    const g = ctx.createRadialGradient(mouse.sx, mouse.sy, 0, mouse.sx, mouse.sy, 260);
-    g.addColorStop(0, `rgba(255,255,255,${peak})`);
+    if (!L) return `rgba(255,255,255,${base})`;
+    const g = ctx.createRadialGradient(L[0], L[1], 0, L[0], L[1], 260);
+    g.addColorStop(0, `rgba(255,255,255,${L[2] === 1 ? peak : base + (peak - base) * L[2]})`);
     g.addColorStop(1, `rgba(255,255,255,${base})`);
     return g;
   }
@@ -149,6 +157,7 @@
   Site.drawBackground = now => {
     for (let i = pings.length - 1; i >= 0; i--) if (now - pings[i].t > 1600) pings.splice(i, 1);
     introStep(now);
+    L = lens();
 
     ctx.fillStyle = '#060606'; ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = 1;
