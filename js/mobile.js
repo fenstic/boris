@@ -23,7 +23,62 @@
     if (el.getBoundingClientRect().top > fold) { el.classList.add('wait'); io.observe(el); }
   });
 
-  let lastY = scrollY, lastT = 0, vel = 0, spin = 0, sweep = 0;
+  const rim = document.createElement('span');
+  rim.className = 'rim';
+  rim.setAttribute('aria-hidden', 'true');
+  const rimK = document.createElement('span');
+  rimK.className = 'rim-k';
+  const sparks = [0, 1, 2, 3].map(n => {
+    const e = document.createElement('i');
+    e.className = 'e' + n;
+    const b = document.createElement('b');
+    e.append(b);
+    rimK.append(e);
+    return b;
+  });
+  rim.append(rimK);
+  sheet.append(rim);
+
+  const S = 140, SPEED = 260;
+  let rimAnims = [], rimW = 0, rimH = 0;
+
+  function buildRim(){
+    const w = sheet.offsetWidth, h = sheet.offsetHeight;
+    if (!w || !h || (w === rimW && h === rimH)) return;
+    rimW = w; rimH = h;
+    const total = 2 * (w + h) + S;
+    const prev = rimAnims[0];
+    const at = prev && prev.effect ? (prev.currentTime % prev.effect.getTiming().duration) / prev.effect.getTiming().duration : 0;
+    const rate = prev ? prev.playbackRate : 1;
+    rimAnims.forEach(a => a.cancel());
+    const lens = [w, h, w, h];
+    const path = [
+      [`translateX(${-S}px)`, `translateX(${w}px)`],
+      [`translateY(${-S}px)`, `translateY(${h}px)`],
+      [`translateX(${w}px)`, `translateX(${-S}px)`],
+      [`translateY(${h}px)`, `translateY(${-S}px)`],
+    ];
+    const duration = total / SPEED * 1000;
+    let cum = 0;
+    rimAnims = sparks.map((b, n) => {
+      const s = cum / total, e = (cum + lens[n] + S) / total;
+      cum += lens[n];
+      const [from, to] = path[n];
+      const a = b.animate([
+        { transform: from, offset: 0 },
+        { transform: from, offset: s },
+        { transform: to, offset: e },
+        { transform: to, offset: 1 },
+      ], { duration, iterations: Infinity, easing: 'linear' });
+      a.currentTime = at * duration;
+      a.playbackRate = rate;
+      return a;
+    });
+  }
+  buildRim();
+  new ResizeObserver(buildRim).observe(sheet);
+
+  let lastY = scrollY, lastT = 0, vel = 0, rate = 1, glow = .45;
 
   Site.mobileStep = now => {
     const dt = lastT ? Math.min(.05, (now - lastT) / 1000) : 0;
@@ -33,11 +88,15 @@
     lastY = y;
 
     const speed = Math.min(Math.abs(vel), 4000);
-    spin = (spin + dt * (12 + speed * .12)) % 360;
-    if (ring) ring.style.transform = `rotate(${spin.toFixed(2)}deg)`;
+    const r = Math.round((1 + speed / 500) * 10) / 10;
+    if (r !== rate) {
+      rate = r;
+      rimAnims.forEach(a => a.updatePlaybackRate(rate));
+      const ra = ring && ring.getAnimations().find(a => a.animationName === 'spin');
+      if (ra) ra.updatePlaybackRate(rate * 1.5 - .5);
+    }
 
-    sweep = (sweep + dt * (24 + speed * .05)) % 360;
-    sheet.style.setProperty('--sa', `${(sweep + y * .3).toFixed(2)}deg`);
-    sheet.style.setProperty('--sg', Math.min(1, .45 + speed / 2500).toFixed(3));
+    const g = Math.round(Math.min(1, .45 + speed / 2500) * 20) / 20;
+    if (g !== glow) { glow = g; rimK.style.opacity = g; }
   };
 })();

@@ -2,12 +2,17 @@
   const { $, mouse, touch, reduce, coarse, PX2MM } = Site;
 
   const cv = $('#grid'), ctx = cv.getContext('2d');
-  let W = 0, H = 0;
+  let W = 0, H = 0, need = true, lastSY = NaN, hadL = false, lastFull = 0;
   function resize(){
     const d = Math.min(devicePixelRatio || 1, 2);
-    W = innerWidth; H = innerHeight;
+    if (coarse) {
+      const h = Math.round(cv.getBoundingClientRect().height) || innerHeight;
+      if (innerWidth === W && h === H) return;
+      W = innerWidth; H = h;
+    } else { W = innerWidth; H = innerHeight; }
     cv.width = W * d; cv.height = H * d;
     ctx.setTransform(d, 0, 0, d, 0, 0);
+    need = true;
   }
   addEventListener('resize', resize);
   resize();
@@ -75,7 +80,7 @@
 
   function gridPath(major, now){
     ctx.beginPath();
-    const seg = 14;
+    const seg = 14, bend = !coarse || L || pings.length;
     const cols = Math.ceil((W + STEP) / STEP), rows = Math.ceil((H + STEP) / STEP);
 
     for (let i = 0, x = 0.5; x < W + STEP; x += STEP, i++) {
@@ -83,6 +88,7 @@
       const p = grow(now, (cols - 1 - i) * V_STAGGER);
       if (p <= 0) continue;
       const start = H + seg, end = start - (H + seg * 2) * p;
+      if (!bend) { ctx.moveTo(x, start); ctx.lineTo(x, end); continue; }
       let [px, py] = warp(x, start, now); ctx.moveTo(px, py);
       for (let y = start - seg; y > end; y -= seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
       [px, py] = warp(x, end, now); ctx.lineTo(px, py);
@@ -94,6 +100,7 @@
       const p = grow(now, (rows - 1 - (j - j0)) * H_STAGGER);
       if (p <= 0) continue;
       const start = W + seg, end = start - (W + seg * 2) * p;
+      if (!bend) { ctx.moveTo(start, y); ctx.lineTo(end, y); continue; }
       let [px, py] = warp(start, y, now); ctx.moveTo(px, py);
       for (let x = start - seg; x > end; x -= seg) { [px, py] = warp(x, y, now); ctx.lineTo(px, py); }
       [px, py] = warp(end, y, now); ctx.lineTo(px, py);
@@ -158,6 +165,15 @@
     for (let i = pings.length - 1; i >= 0; i--) if (now - pings[i].t > 1600) pings.splice(i, 1);
     introStep(now);
     L = lens();
+
+    if (coarse) {
+      const sy = scrollY;
+      if (now - lastFull > 500) need = true;
+      const busy = need || !introDone || L || hadL || sy !== lastSY || pings.length || done.length || meas.on;
+      hadL = !!L; lastSY = sy;
+      if (!busy) return;
+      need = false; lastFull = now;
+    }
 
     ctx.fillStyle = '#060606'; ctx.fillRect(0, 0, W, H);
     ctx.lineWidth = 1;

@@ -24,10 +24,13 @@
       if (touch.on) { px = touch.sx; py = touch.sy; }
       else if (!reduce && ready()) {
         const r = nameEl.getBoundingClientRect();
-        const ph = (1 - Math.cos(performance.now() / 1000 * 1.1)) / 2;
-        px = r.left - 60 + (r.width + 120) * ph; py = r.top + r.height / 2;
+        if (r.bottom > 0 && r.top < innerHeight) {
+          const ph = (1 - Math.cos(performance.now() / 1000 * 1.1)) / 2;
+          px = r.left - 60 + (r.width + 120) * ph; py = r.top + r.height / 2;
+        }
       }
     }
+    let changed = false;
     letters.forEach((el, i) => {
       let t = 0;
       if (px !== null) {
@@ -41,9 +44,11 @@
       s.w += (300 + t * 520 - s.w) * .12;
       s.d += (100 + (coarse ? 0 : t * 18) - s.d) * .12;
       s.r += (t * 100 - s.r) * .12;
-      el.style.fontVariationSettings = `"wght" ${s.w.toFixed(1)},"wdth" ${s.d.toFixed(1)},"ROND" ${s.r.toFixed(0)},"opsz" 144`;
+      const v = `"wght" ${s.w.toFixed(1)},"wdth" ${s.d.toFixed(1)},"ROND" ${s.r.toFixed(0)},"opsz" 144`;
+      if (!coarse || v !== s.v) { el.style.fontVariationSettings = v; s.v = v; changed = true; }
     });
 
+    if (coarse && !changed) return;
     const mm = (nameEl.getBoundingClientRect().width * PX2MM).toFixed(1) + ' mm';
     if (mm !== lastDim) { $('#dimTxt').textContent = mm; lastDim = mm; }
   };

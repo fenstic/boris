@@ -4,7 +4,9 @@
   if (!loader) { document.documentElement.classList.add('ready'); return; }
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const MIN = reduce ? 0 : 1100;
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  const root = document.documentElement;
+  const MIN = reduce ? 0 : coarse ? 800 : 1100;
   const MAX = 4000;
   const t0 = performance.now();
   let finished = false;
@@ -25,10 +27,18 @@
     if (finished) return;
     finished = true;
     if (reduce) { remove(); return; }
+    if (coarse) { open(); return; }
 
     document.documentElement.classList.add('lines');
     loader.classList.add('done');
     setTimeout(morph, 280);
+  }
+
+  function open(){
+    loader.classList.add('go');
+    setTimeout(() => { root.classList.add('lines'); loader.classList.add('open'); }, 380);
+    setTimeout(() => root.classList.add('ready'), 640);
+    setTimeout(() => loader.remove(), 1400);
   }
 
   function morph(){
