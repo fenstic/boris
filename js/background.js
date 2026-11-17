@@ -26,6 +26,7 @@
   addEventListener('pointermove', e => {
     if (meas.on) { meas.x2 = e.clientX; meas.y2 = e.clientY; }
   }, { passive: true });
+  addEventListener('pointercancel', () => { meas.on = false; });
   addEventListener('pointerup', () => {
     if (!meas.on) return;
     meas.on = false;

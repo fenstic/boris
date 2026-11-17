@@ -14,12 +14,21 @@
   const state = letters.map(() => ({ w: 300, d: 100, r: 0 }));
   let lastDim = '';
 
+  const touch = { x: 0, y: 0, on: false };
+  const onTouch = e => { const t = e.touches[0]; if (t) { touch.x = t.clientX; touch.y = t.clientY; touch.on = true; } };
+  addEventListener('touchstart', onTouch, { passive: true });
+  addEventListener('touchmove', onTouch, { passive: true });
+  addEventListener('touchend', e => { if (!e.touches.length) touch.on = false; }, { passive: true });
+  addEventListener('touchcancel', () => { touch.on = false; }, { passive: true });
+
   Site.nameStep = () => {
     letters.forEach((el, i) => {
-      let t = 0;
-      if (mouse.on && !coarse) {
+      let t = 0, px = null, py = null;
+      if (mouse.on && !coarse) { px = mouse.sx; py = mouse.sy; }
+      else if (touch.on) { px = touch.x; py = touch.y; }
+      if (px !== null) {
         const r = el.getBoundingClientRect();
-        const dist = Math.hypot(mouse.sx - (r.left + r.width / 2), mouse.sy - (r.top + r.height / 2));
+        const dist = Math.hypot(px - (r.left + r.width / 2), py - (r.top + r.height / 2));
         t = Math.max(0, 1 - dist / 340);
         t = t * t * (3 - 2 * t);
       }

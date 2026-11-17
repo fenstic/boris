@@ -53,7 +53,6 @@ img{max-width:100%}
 .strip.bot{border-top:1px solid var(--line)}
 .strip .grp{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .strip a.lbl{color:var(--ink-2);transition:color .2s}
-.strip a.lbl:hover{color:var(--ink)}
 #coords{min-width:17ch;text-align:right}
 @media (max-width:640px){#coords{display:none}}
 
@@ -100,17 +99,46 @@ img{max-width:100%}
 .parts{list-style:none;margin:0;padding:0}
 .parts li{border-bottom:1px solid var(--line)}
 .part{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 0;position:relative;transition:padding .45s cubic-bezier(.2,.8,.2,1)}
-.part:hover,.part:focus-visible{padding-left:16px;padding-right:20px}
+.part:focus-visible{padding-left:16px;padding-right:20px}
 .part .no{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums;font-variation-settings:"wdth" 112}
 .part .t{font-size:19px;color:var(--ink);font-variation-settings:"wght" 450,"opsz" 24;transition:font-variation-settings .35s}
-.part:hover .t{font-variation-settings:"wght" 650,"opsz" 24}
 .part .d{font-size:14px;color:var(--ink-3);margin-top:2px;transition:color .3s}
-.part:hover .d{color:var(--ink-2)}
 .part .go{display:flex;align-items:center;gap:10px;color:var(--ink-3)}
 .part .go svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.4;transition:transform .35s}
-.part:hover .go{color:var(--ink)}
-.part:hover .go svg{transform:translate(3px,-3px)}
 @media (max-width:520px){.part .go .lbl{display:none}}
+@media (hover:hover){
+  .strip a.lbl:hover{color:var(--ink)}
+  .part:hover{padding-left:16px;padding-right:20px}
+  .part:hover .t{font-variation-settings:"wght" 650,"opsz" 24}
+  .part:hover .d{color:var(--ink-2)}
+  .part:hover .go{color:var(--ink)}
+  .part:hover .go svg{transform:translate(3px,-3px)}
+}
+@media (hover:none){
+  .strip a.lbl:active{color:var(--ink)}
+  .part:active .t{font-variation-settings:"wght" 650,"opsz" 24}
+  .part:active .d{color:var(--ink-2)}
+  .part:active .go{color:var(--ink)}
+  .part:active .go svg{transform:translate(3px,-3px)}
+}
+
+@media (pointer:coarse){
+  html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+}
+@media (pointer:coarse) and (max-width:920px){
+  .who .name{font-size:clamp(72px,min(40vw,32vh),196px)}
+}
+@media (pointer:coarse) and (max-width:640px){
+  .body{padding:32px 18px 40px;gap:52px}
+  .facts{gap:36px}
+  .dc{gap:18px}
+  .part{grid-template-columns:24px minmax(0,1fr) auto;gap:12px;padding:16px 0}
+  .part .t{font-size:18px}
+  .strip.bot{row-gap:6px;padding-top:8px;padding-bottom:8px}
+  .strip.bot .grp{gap:0 20px}
+  .strip.bot .grp a{padding:10px 0}
+  #countdown{margin-left:auto;padding:10px 0}
+}
 
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
