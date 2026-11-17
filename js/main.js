@@ -2,6 +2,8 @@
   const { mouse, touch } = Site;
 
   function frame(now){
+    requestAnimationFrame(frame);
+
     mouse.sx += (mouse.x - mouse.sx) * .18;
     mouse.sy += (mouse.y - mouse.sy) * .18;
     touch.sx += (touch.x - touch.sx) * .22;
@@ -12,8 +14,6 @@
     Site.nameStep();
     Site.cursorStep(now);
     Site.mobileStep(now);
-
-    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 })();

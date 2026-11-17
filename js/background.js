@@ -60,7 +60,7 @@
       dx += vx * k; dy += vy * k;
     }
     for (const p of pings) {
-      const age = (now - p.t) / 1600, R = age * 520;
+      const age = Math.max(0, (now - p.t) / 1600), R = age * 520;
       const vx = x - p.x, vy = y - p.y, r = Math.hypot(vx, vy) || 1;
       const a = 9 * (1 - age) * Math.exp(-((r - R) ** 2) / (2 * 26 * 26));
       dx += vx / r * a; dy += vy / r * a;
@@ -181,7 +181,7 @@
     gridPath(true, now);  ctx.strokeStyle = lit(.06, .22);  ctx.stroke();
 
     for (const p of pings) {
-      const age = (now - p.t) / 1600;
+      const age = Math.max(0, (now - p.t) / 1600);
       ctx.strokeStyle = `rgba(237,237,237,${.5 * (1 - age)})`; ctx.setLineDash([2, 5]);
       ctx.beginPath(); ctx.arc(p.x, p.y, age * 520, 0, 6.283); ctx.stroke(); ctx.setLineDash([]);
     }
@@ -189,7 +189,7 @@
     frameTicks(now);
 
     for (let i = done.length - 1; i >= 0; i--) {
-      const age = (now - done[i].t) / 3000;
+      const age = Math.max(0, (now - done[i].t) / 3000);
       if (age >= 1) { done.splice(i, 1); continue; }
       drawMeasure(done[i], .85 * (1 - age));
     }
