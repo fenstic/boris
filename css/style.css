@@ -53,8 +53,8 @@ img{max-width:100%}
 .strip.bot{border-top:1px solid var(--line)}
 .strip .grp{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .strip a.lbl{color:var(--ink-2);transition:color .2s}
-.strip a.src{display:inline-flex;align-items:center;gap:7px}
-.strip a.src svg{width:12px;height:12px;flex:none;fill:currentColor}
+.strip a.ic{display:inline-flex;align-items:center;gap:7px}
+.strip a.ic svg{width:13px;height:13px;flex:none}
 #coords{min-width:17ch;text-align:right}
 @media (max-width:640px){#coords{display:none}}
 
